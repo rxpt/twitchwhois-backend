@@ -197,7 +197,7 @@ class TwitchAPI {
   async topGames(rank = 10) {
     try {
       const token = await this.getToken();
-      const response = await this.API_HELIX.get("videos", {
+      const response = await this.API_HELIX.get("games/top", {
         params: { first: rank },
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -207,6 +207,40 @@ class TwitchAPI {
       console.log(err);
       return null;
     }
+  }
+
+  async getStreamsByGame(game_id, language = null) {
+    try {
+      const token = await this.getToken();
+      const params = {
+        game_id,
+        first: 10,
+        type: "live",
+      };
+      if (typeof language == "string" && language.length == 2) {
+        params.language = language.toLowerCase();
+      }
+      const response = await this.API_HELIX.get("streams", {
+        params,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data.data ?? null;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  }
+
+  async topGameStreams(rank = 10, language = null) {
+    const topgames = await this.topGames(rank);
+    if (topgames) {
+      const response = Promise.all(topgames.map(async game => {
+        game.streams = await this.getStreamsByGame(game.id, language);
+        return game;
+      }));
+      return response;
+    }
+    return null;
   }
 }
 
