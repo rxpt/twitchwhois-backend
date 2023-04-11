@@ -38,6 +38,7 @@ class TwitchAPI {
 
       return this.token;
     } catch (err) {
+      console.log(err);
       return null;
     }
   }
@@ -53,6 +54,7 @@ class TwitchAPI {
 
       return response.data.data[0] ?? null;
     } catch (err) {
+      console.log(err);
       return null;
     }
   }
@@ -70,6 +72,7 @@ class TwitchAPI {
 
       return response.data.total ?? null;
     } catch (err) {
+      console.log(err);
       return null;
     }
   }
@@ -86,6 +89,7 @@ class TwitchAPI {
 
       return response.data.data ?? null;
     } catch (err) {
+      console.log(err);
       return null;
     }
   }
@@ -102,6 +106,7 @@ class TwitchAPI {
 
       return response.data.data ?? null;
     } catch (err) {
+      console.log(err);
       return null;
     }
   }
@@ -119,6 +124,7 @@ class TwitchAPI {
 
       return user ?? null;
     } catch (err) {
+      console.log(err);
       return null;
     }
   }
@@ -133,6 +139,7 @@ class TwitchAPI {
 
       return response.data.data[0] ?? null;
     } catch (err) {
+      console.log(err);
       return null;
     }
   }
@@ -147,6 +154,7 @@ class TwitchAPI {
 
       return response.data.data ?? null;
     } catch (err) {
+      console.log(err);
       return null;
     }
   }
@@ -161,6 +169,7 @@ class TwitchAPI {
 
       return response.data.data ?? null;
     } catch (err) {
+      console.log(err);
       return null;
     }
   }
@@ -178,6 +187,7 @@ class TwitchAPI {
       user.videos = await this.getVideos(user.id);
       user.clips = await this.getClips(user.id);
     } catch (err) {
+      console.log(err);
       return null;
     }
   }
@@ -192,6 +202,7 @@ class TwitchAPI {
 
       return response.data.data ?? null;
     } catch (err) {
+      console.log(err);
       return null;
     }
   }
