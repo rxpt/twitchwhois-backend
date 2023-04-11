@@ -148,7 +148,7 @@ class TwitchAPI {
     try {
       const token = await this.getToken();
       const response = await this.API_HELIX.get("clips", {
-        params: { user_id: userId, first: 3 },
+        params: { broadcaster_id: userId, first: 3 },
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -186,6 +186,8 @@ class TwitchAPI {
       user.emotes = await this.getChannelEmotes(user.id);
       user.videos = await this.getVideos(user.id);
       user.clips = await this.getClips(user.id);
+
+      return user;
     } catch (err) {
       console.log(err);
       return null;
