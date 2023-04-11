@@ -148,7 +148,7 @@ class TwitchAPI {
     try {
       const token = await this.getToken();
       const response = await this.API_HELIX.get("clips", {
-        params: { broadcaster_id: userId, first: 3 },
+        params: { broadcaster_id: userId, first: 5 },
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -163,7 +163,7 @@ class TwitchAPI {
     try {
       const token = await this.getToken();
       const response = await this.API_HELIX.get("videos", {
-        params: { user_id: userId, first: 3 },
+        params: { user_id: userId, first: 5, sort: "views" },
         headers: { Authorization: `Bearer ${token}` },
       });
 
