@@ -1,5 +1,4 @@
 import axios from "axios";
-import { merge } from "lodash";
 
 class TwitchAPI {
   constructor(clientId, clientSecret) {
@@ -114,12 +113,11 @@ class TwitchAPI {
         params: { broadcaster_id: userId },
         headers: { Authorization: `Bearer ${token}` },
       });
-      const follows = await this.getFollows(userId);
-      if (follows) {
-        return merge(response.data.data[0], { follows });
-      }
 
-      return response.data.data[0] ?? null;
+      const user = response.data.data[0];
+      user.follows = await this.getFollows(userId);
+
+      return user ?? null;
     } catch (err) {
       return null;
     }
@@ -199,4 +197,9 @@ class TwitchAPI {
   }
 }
 
-export default new TwitchAPI(process.env.CLIENT_ID, process.env.CLIENT_SECRET);
+const twitchAPI = new TwitchAPI(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET
+);
+
+export default twitchAPI;
