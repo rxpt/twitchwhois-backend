@@ -247,7 +247,7 @@ class TwitchAPI {
       if (!user || !user.id) {
         throw new TypeError("Não foi possivel encontrar este usuário");
       }
-      user.color = await this.userChatColor(user.id);
+      user.color = (await this.userChatColor(user.id))?.color;
       user.channel = await this.getChannel(user.id);
       user.chatstate = await this.chatSettings(user.id);
       user.stream = await this.getStream(user.id);
