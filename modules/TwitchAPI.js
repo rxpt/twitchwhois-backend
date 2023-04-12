@@ -144,11 +144,11 @@ class TwitchAPI {
     }
   }
 
-  async getClips(userId) {
+  async getStreamSchedule(userId) {
     try {
       const token = await this.getToken();
-      const response = await this.API_HELIX.get("clips", {
-        params: { broadcaster_id: userId, first: 5 },
+      const response = await this.API_HELIX.get("schedule", {
+        params: { broadcaster_id: userId },
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -159,11 +159,78 @@ class TwitchAPI {
     }
   }
 
-  async getVideos(userId) {
+  async getClips(userId, options = null) {
     try {
+      const params = { first: 10, ...options, broadcaster_id: userId };
+      const token = await this.getToken();
+      const response = await this.API_HELIX.get("clips", {
+        params,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data.data ?? null;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  }
+
+  async getVideos(userId, options = null) {
+    try {
+      const params = {
+        first: 10,
+        sort: "trending",
+        ...options,
+        user_id: userId,
+      };
       const token = await this.getToken();
       const response = await this.API_HELIX.get("videos", {
-        params: { user_id: userId, first: 5, sort: "views" },
+        params,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data.data ?? null;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  }
+
+  async chatSettings(userId) {
+    try {
+      const token = await this.getToken();
+      const response = await this.API_HELIX.get("chat/settings", {
+        params: { broadcaster_id: userId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data.data ?? null;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  }
+
+  async userChatColor(userId) {
+    try {
+      const token = await this.getToken();
+      const response = await this.API_HELIX.get("chat/color", {
+        params: { user_id: userId },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data.data[0] ?? null;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  }
+
+  async currentSoundtrack(userId) {
+    try {
+      const token = await this.getToken();
+      const response = await this.API_HELIX.get("soundtrack/current_track", {
+        params: { broadcaster_id: userId },
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -180,8 +247,14 @@ class TwitchAPI {
       if (!user || !user.id) {
         throw new TypeError("Não foi possivel encontrar este usuário");
       }
+      user.color = await this.userChatColor(user.id);
       user.channel = await this.getChannel(user.id);
+      user.chatstate = await this.chatSettings(user.id);
       user.stream = await this.getStream(user.id);
+      user.soundtrack = user.stream
+        ? await this.currentSoundtrack(user.id)
+        : null;
+      user.schedule = await this.getStreamSchedule(user.id);
       user.badges = await this.getChannelBadges(user.id);
       user.emotes = await this.getChannelEmotes(user.id);
       user.videos = await this.getVideos(user.id);
@@ -194,11 +267,11 @@ class TwitchAPI {
     }
   }
 
-  async topGames(rank = 10) {
+  async topGames(params = null) {
     try {
       const token = await this.getToken();
       const response = await this.API_HELIX.get("games/top", {
-        params: { first: rank },
+        params: { first: 10, ...params },
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -209,12 +282,12 @@ class TwitchAPI {
     }
   }
 
-  async getStreamsByGame(game_id, language = null) {
+  async getStreamsByGame(game_id, language = null, limit = 10) {
     try {
       const token = await this.getToken();
       const params = {
         game_id,
-        first: 10,
+        first: limit,
         type: "live",
       };
       if (typeof language == "string" && language.length == 2) {
@@ -231,13 +304,15 @@ class TwitchAPI {
     }
   }
 
-  async topGameStreams(rank = 10, language = null) {
-    const topgames = await this.topGames(rank);
+  async topGameStreams(rank = 5, language = null) {
+    const topgames = await this.topGames();
     if (topgames) {
-      const response = Promise.all(topgames.map(async game => {
-        game.streams = await this.getStreamsByGame(game.id, language);
-        return game;
-      }));
+      const response = Promise.all(
+        topgames.map(async (game) => {
+          game.streams = await this.getStreamsByGame(game.id, language, rank);
+          return game;
+        })
+      );
       return response;
     }
     return null;
