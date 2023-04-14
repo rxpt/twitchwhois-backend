@@ -152,7 +152,7 @@ class TwitchAPI {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      return response.data.data[0] ?? null;
+      return response.data.data ?? null;
     } catch (err) {
       console.log(err);
       return null;
@@ -204,7 +204,7 @@ class TwitchAPI {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      return response.data.data ?? null;
+      return response.data.data[0] ?? null;
     } catch (err) {
       console.log(err);
       return null;
