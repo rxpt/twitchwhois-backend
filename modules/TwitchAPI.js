@@ -257,8 +257,8 @@ class TwitchAPI {
       user.schedule = await this.getStreamSchedule(user.id);
       user.badges = await this.getChannelBadges(user.id);
       user.emotes = await this.getChannelEmotes(user.id);
-      user.videos = !!(await this.getVideos(user.id)).data;
-      user.clips = !!(await this.getClips(user.id)).data;
+      user.videos = !!(await this.getVideos(user.id))?.data?.length;
+      user.clips = !!(await this.getClips(user.id))?.data?.length;
 
       return user;
     } catch (err) {
