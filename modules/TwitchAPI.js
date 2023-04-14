@@ -161,7 +161,8 @@ class TwitchAPI {
 
   async getClips(userId, options = null) {
     try {
-      const params = { first: 10, ...options, broadcaster_id: userId };
+      const defaultParams = { first: 10, broadcaster_id: userId };
+      const params = Object.assign({}, defaultParams, options);
       const token = await this.getToken();
       const response = await this.API_HELIX.get("clips", {
         params,
@@ -177,12 +178,8 @@ class TwitchAPI {
 
   async getVideos(userId, options = null) {
     try {
-      const params = {
-        first: 10,
-        sort: "trending",
-        ...options,
-        user_id: userId,
-      };
+      const defaultParams = { first: 10, sort: "trending", user_id: userId };
+      const params = Object.assign({}, defaultParams, options);
       const token = await this.getToken();
       const response = await this.API_HELIX.get("videos", {
         params,
