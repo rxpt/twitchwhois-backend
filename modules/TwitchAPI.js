@@ -248,9 +248,10 @@ class TwitchAPI {
       user.channel = await this.getChannel(user.id);
       user.chatstate = await this.chatSettings(user.id);
       user.stream = await this.getStream(user.id);
-      user.soundtrack = user.stream
+      /*user.soundtrack = user.stream
         ? await this.currentSoundtrack(user.id)
-        : null;
+        : null;*/
+      // shutdown by twitch
       user.schedule = await this.getStreamSchedule(user.id);
       user.badges = await this.getChannelBadges(user.id);
       user.emotes = await this.getChannelEmotes(user.id);
